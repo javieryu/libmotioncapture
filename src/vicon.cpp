@@ -2,6 +2,7 @@
 
 // VICON
 #include "vicon_sdk/Client.h"
+#include <iostream>
 
 using namespace ViconDataStreamSDK::CPP;
 
@@ -22,18 +23,24 @@ namespace libmotioncapture {
     pImpl = new MotionCaptureViconImpl;
 
     // Try connecting...
+    std::cout << "[LIBMOCAP] Attempting to connect to " << hostname << std::endl;
     while (!pImpl->client.IsConnected().Connected) {
       pImpl->client.Connect(hostname);
     }
 
+    std::cout << "[LIBMOCAP] Connected to " << hostname << std::endl;
+    std::cout << "[LIBMOCAP] Attempting to enable objects" << std::endl;
     if (enableObjects) {
       pImpl->client.EnableSegmentData();
     }
+
+    std::cout << "[LIBMOCAP] Attempting to enable pointclouds" << std::endl;
     if (enablePointcloud) {
       pImpl->client.EnableUnlabeledMarkerData();
     }
 
     // This is the lowest latency option
+    std::cout << "[LIBMOCAP] Setting vicon stream mode" << std::endl;
     pImpl->client.SetStreamMode(ViconDataStreamSDK::CPP::StreamMode::ServerPush);
 
     // Set the global up axis
@@ -46,6 +53,7 @@ namespace libmotioncapture {
     std::stringstream sstr;
     sstr << version.Major << "." << version.Minor << "." << version.Point;
     pImpl->version = sstr.str();
+    std::cout << "[LIBMOCAP] VICON version number " << sstr.str() << std::endl;
   }
 
   MotionCaptureVicon::~MotionCaptureVicon()
